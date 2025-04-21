@@ -54,9 +54,9 @@ while read line; do
 done <<< "$(zpool status -L | grep -E '^\s+sd[a-h][0-9]')"
 
 # Check for alerts
-alerts=$(midclt call alert.list)
+alerts=$(midclt call alert.list | jq '.[] | select(.dismissed==false) | .level')
 
-if [[ ${#alerts} -gt 2 ]]; then
+if [[ ${#alerts} -gt 0 ]]; then
     if echo "$alerts" | grep -q -E "CRITICAL|ALERT|EMERGENCY"; then
         echo "There are critical alerts in the alert list"
         devices[0]=c
